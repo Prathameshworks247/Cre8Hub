@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import React from "react";
 import { AuthProvider } from "@/hooks/useAuth";
-import Index from "./pages/Index";
+import Landing from "./pages/Landing";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
@@ -21,10 +21,10 @@ const App = () => (
       <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
         <TooltipProvider>
           <AuthProvider>
-            <div className="min-h-screen bg-black">
+            <div className="min-h-screen">
               <BrowserRouter>
                 <Routes>
-                  <Route path="/" element={<Index />} />
+                  <Route path="/" element={<Landing />} />
                   <Route path="/signin" element={<SignIn />} />
                   <Route path="/signup" element={<SignUp />} />
                   <Route path="/profile-setup" element={<ProfileSetup />} />

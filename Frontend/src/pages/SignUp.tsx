@@ -69,9 +69,9 @@ const SignUp = () => {
         <div className="text-center">
           <Link to="/" className="inline-block">
             <img 
-              src="/lovable-uploads/43c4d891-861d-4066-b61a-2dc42b49a39b.png" 
+              src="/lovable-uploads/logomain.png" 
               alt="CRE8HUB Logo" 
-              className="h-24 mx-auto mb-2"
+              className="h-48 mx-auto -mb-8"
             />
           </Link>
           <h2 className="mt-2 text-3xl font-bold text-white">Create your account</h2>

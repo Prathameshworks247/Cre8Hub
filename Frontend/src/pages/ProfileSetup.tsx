@@ -1,317 +1,459 @@
+import { useState, useCallback } from "react";
+import { Briefcase, Pen, Users, Image, ChartBar, MessageSquare, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { useProfile } from "@/hooks/useProfile";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Briefcase, Pen, Users, Image, ChartBar, MessageSquare } from "lucide-react";
+// Type definitions
+type UserRole = "content-creator" | "entrepreneur" | "social-media-manager";
+type ContentGenre = "educational" | "entertainment" | "gaming" | "lifestyle" | "music" | "tech" | "travel" | "other";
+type BusinessCategory = "ecommerce" | "saas" | "consulting" | "agency" | "retail" | "manufacturing" | "other";
+type ClientType = "influencers" | "small-businesses" | "corporate" | "individuals" | "mixed";
+type BusinessSize = "solo" | "small-team" | "medium" | "large";
+type SocialMediaNiche = "content-creation" | "community-management" | "marketing-campaigns" | "analytics" | "full-service";
+
+interface FormData {
+  contentGenre: ContentGenre | "";
+  businessCategory: BusinessCategory | "";
+  businessDescription: string;
+  clientType: ClientType | "";
+  businessSize: BusinessSize | "";
+  socialMediaNiche: SocialMediaNiche | "";
+}
+
+interface UserProfile {
+  role: UserRole;
+  formData: FormData;
+  completedAt: string;
+}
 
 const ProfileSetup = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { userProfile } = useAuth();
-  const { 
-    loading, 
-    updateUserRole,
-    createContentCreatorProfile,
-    createEntrepreneurProfile,
-    createSocialMediaManagerProfile 
-  } = useProfile();
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [toastMessage, setToastMessage] = useState<{type: 'success' | 'error', message: string} | null>(null);
   
-  const [step, setStep] = useState(1);
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    // Content creator fields
+  const [formData, setFormData] = useState<FormData>({
     contentGenre: "",
-    // Entrepreneur fields
     businessCategory: "",
     businessDescription: "",
-    // Social media manager fields
     clientType: "",
     businessSize: "",
     socialMediaNiche: ""
   });
 
-  const handleRoleSelect = (role: string) => {
-    setUserRole(role);
+  // Toast function
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToastMessage({ type, message });
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleRoleSelect = useCallback((role: string) => {
+    setUserRole(role as UserRole);
+  }, []);
+
+  const handleFormDataChange = useCallback(<K extends keyof FormData>(
+    key: K,
+    value: FormData[K]
+  ) => {
+    setFormData(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  }, []);
+
+  const validateStep1 = (): boolean => {
+    if (!userRole) {
+      showToast('error', 'Please select a role to continue');
+      return false;
+    }
+    return true;
+  };
+
+  const validateStep2 = (): boolean => {
+    if (userRole === "content-creator") {
+      if (!formData.contentGenre) {
+        showToast('error', 'Please select a content genre');
+        return false;
+      }
+    } else if (userRole === "entrepreneur") {
+      if (!formData.businessCategory || !formData.businessDescription.trim()) {
+        showToast('error', 'Please complete all required fields');
+        return false;
+      }
+    } else if (userRole === "social-media-manager") {
+      if (!formData.clientType || !formData.businessSize || !formData.socialMediaNiche) {
+        showToast('error', 'Please complete all required fields');
+        return false;
+      }
+    }
+    return true;
   };
 
   const handleNext = async () => {
-    if (step === 1 && !userRole) {
-      toast({
-        title: "Please select a role",
-        description: "You need to select a role to continue",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (step === 1) {
-      // Update user role in database
-      const { error } = await updateUserRole(userRole as any);
-      if (error) return;
-      
+      if (!validateStep1()) return;
       setStep(2);
       return;
     }
 
     if (step === 2) {
-      // Create role-specific profile
-      let result;
+      if (!validateStep2()) return;
       
-      if (userRole === "content-creator") {
-        if (!formData.contentGenre) {
-          toast({
-            title: "Please select a genre",
-            description: "You need to select a content genre to continue",
-            variant: "destructive",
-          });
-          return;
-        }
-        result = await createContentCreatorProfile(formData.contentGenre as any);
-      } else if (userRole === "entrepreneur") {
-        if (!formData.businessCategory || !formData.businessDescription) {
-          toast({
-            title: "Please complete all fields",
-            description: "All fields are required to continue",
-            variant: "destructive",
-          });
-          return;
-        }
-        result = await createEntrepreneurProfile(
-          formData.businessCategory as any,
-          formData.businessDescription
-        );
-      } else if (userRole === "social-media-manager") {
-        if (!formData.clientType || !formData.businessSize || !formData.socialMediaNiche) {
-          toast({
-            title: "Please complete all fields",
-            description: "All fields are required to continue",
-            variant: "destructive",
-          });
-          return;
-        }
-        result = await createSocialMediaManagerProfile(
-          formData.clientType as any,
-          formData.businessSize as any,
-          formData.socialMediaNiche as any
-        );
-      }
-
-      if (result && !result.error) {
-        toast({
-          title: "Profile setup complete!",
-          description: "Your profile has been successfully set up.",
-        });
+      setLoading(true);
+      
+      // Simulate API call delay
+      setTimeout(() => {
+        const profile: UserProfile = {
+          role: userRole!,
+          formData: { ...formData },
+          completedAt: new Date().toISOString()
+        };
         
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      }
+        setUserProfile(profile);
+        setLoading(false);
+        setStep(3);
+        showToast('success', 'Profile setup completed successfully!');
+        
+        // Log the saved data to console
+        console.log('Profile saved:', profile);
+      }, 1500);
     }
   };
 
+  const handleBack = useCallback(() => {
+    if (step === 2) {
+      setStep(1);
+    }
+  }, [step]);
+
+  const handleStartOver = () => {
+    setStep(1);
+    setUserRole(null);
+    setUserProfile(null);
+    setFormData({
+      contentGenre: "",
+      businessCategory: "",
+      businessDescription: "",
+      clientType: "",
+      businessSize: "",
+      socialMediaNiche: ""
+    });
+  };
+
+  // Success page
+  if (step === 3) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md space-y-8">
+          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-8 text-center">
+            <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-500/20 mb-6">
+              <CheckCircle className="h-10 w-10 text-green-400" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-white mb-4">Welcome aboard!</h2>
+            <p className="text-gray-300 mb-6">Your profile has been set up successfully.</p>
+            
+            {userProfile && (
+              <div className="bg-white/5 rounded-lg p-4 mb-6 text-left">
+                <h3 className="text-lg font-semibold text-white mb-2">Profile Summary:</h3>
+                <div className="space-y-2 text-sm text-gray-300">
+                  <p><span className="font-medium">Role:</span> {userProfile.role.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+                  {userProfile.role === 'content-creator' && formData.contentGenre && (
+                    <p><span className="font-medium">Genre:</span> {formData.contentGenre}</p>
+                  )}
+                  {userProfile.role === 'entrepreneur' && (
+                    <>
+                      <p><span className="font-medium">Category:</span> {formData.businessCategory}</p>
+                      <p><span className="font-medium">Description:</span> {formData.businessDescription}</p>
+                    </>
+                  )}
+                  {userProfile.role === 'social-media-manager' && (
+                    <>
+                      <p><span className="font-medium">Clients:</span> {formData.clientType}</p>
+                      <p><span className="font-medium">Team Size:</span> {formData.businessSize}</p>
+                      <p><span className="font-medium">Niche:</span> {formData.socialMediaNiche}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            <div className="space-y-3">
+              <button
+                onClick={() => window.location.href = '/dashboard'}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105"
+              >
+                Go to Dashboard
+              </button>
+              
+              <button
+                onClick={handleStartOver}
+                className="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-3 px-6 rounded-lg border border-white/20 transition-all duration-200"
+              >
+                Start Over
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-cre8-dark to-black py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
+        {/* Header */}
         <div className="text-center">
-          <img 
-            src="/lovable-uploads/43c4d891-861d-4066-b61a-2dc42b49a39b.png" 
-            alt="CRE8HUB Logo" 
-            className="h-24 mx-auto mb-2"
-          />
-          <h2 className="mt-2 text-3xl font-bold text-white">Set Up Your Profile</h2>
-          <p className="mt-2 text-sm text-gray-400">
+          <div className="mx-auto h-16 w-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+            <span className="text-2xl font-bold text-white">C8</span>
+          </div>
+          <h2 className="text-3xl font-bold text-white">Set Up Your Profile</h2>
+          <p className="mt-2 text-sm text-gray-300">
             Tell us more about yourself so we can personalize your experience
           </p>
         </div>
         
-        <Card className="bg-cre8-dark/50 backdrop-blur-lg border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white text-xl">
-              {step === 1 ? "What best describes you?" : userRole === "content-creator" ? 
-                "What type of content do you create?" : userRole === "entrepreneur" ? 
-                "Tell us about your business" : "Tell us about your social media management"}
-            </CardTitle>
-            <CardDescription className="text-gray-400">
-              {step === 1 ? "Choose the option that best fits your role" : "This helps us tailor our features to your needs"}
-            </CardDescription>
-          </CardHeader>
+        {/* Progress indicator */}
+        <div className="flex items-center justify-center space-x-4 mb-8">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 1 ? 'bg-blue-600 text-white' : 'bg-white/20 text-gray-400'}`}>
+            1
+          </div>
+          <div className={`h-1 w-12 ${step >= 2 ? 'bg-blue-600' : 'bg-white/20'}`}></div>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 2 ? 'bg-blue-600 text-white' : 'bg-white/20 text-gray-400'}`}>
+            2
+          </div>
+        </div>
+        
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-6">
+          {/* Step 1: Role Selection */}
+          {step === 1 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">What best describes you?</h3>
+                <p className="text-gray-300 text-sm">Choose the option that best fits your role</p>
+              </div>
+              
+              <div className="space-y-3">
+                {[
+                  { value: "content-creator", icon: Pen, label: "Content Creator", desc: "Create engaging content for audiences" },
+                  { value: "entrepreneur", icon: Briefcase, label: "Entrepreneur", desc: "Build and grow your business" },
+                  { value: "social-media-manager", icon: Users, label: "Social Media Manager", desc: "Manage social media for clients" }
+                ].map(({ value, icon: Icon, label, desc }) => (
+                  <label
+                    key={value}
+                    className={`flex items-center space-x-3 rounded-lg border-2 p-4 cursor-pointer transition-all ${
+                      userRole === value 
+                        ? "border-blue-500 bg-blue-500/10" 
+                        : "border-white/20 hover:bg-white/5 hover:border-white/30"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="userRole"
+                      value={value}
+                      checked={userRole === value}
+                      onChange={(e) => handleRoleSelect(e.target.value)}
+                      className="sr-only"
+                    />
+                    <Icon className="h-6 w-6 text-blue-400 flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="text-white font-medium">{label}</div>
+                      <div className="text-gray-400 text-sm">{desc}</div>
+                    </div>
+                    {userRole === value && <CheckCircle className="h-5 w-5 text-blue-400" />}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
           
-          <CardContent>
-            {step === 1 && (
-              <div className="space-y-4">
-                <RadioGroup 
-                  className="grid grid-cols-1 gap-4 md:grid-cols-3"
-                  onValueChange={handleRoleSelect}
-                  value={userRole || ""}
+          {/* Step 2: Role-specific details */}
+          {step === 2 && userRole === "content-creator" && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">What type of content do you create?</h3>
+                <p className="text-gray-300 text-sm">This helps us tailor our features to your needs</p>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-white text-sm font-medium">Content Genre *</label>
+                <select
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={formData.contentGenre}
+                  onChange={(e) => handleFormDataChange('contentGenre', e.target.value as ContentGenre)}
                 >
-                  <div className={`flex flex-col items-center justify-between rounded-md border-2 p-4 ${userRole === "content-creator" ? "border-cre8-blue bg-cre8-blue/10" : "border-white/10 hover:bg-white/5"}`}>
-                    <RadioGroupItem value="content-creator" id="content-creator" className="sr-only" />
-                    <Pen className="mb-3 h-6 w-6 text-cre8-blue" />
-                    <Label htmlFor="content-creator" className="text-center text-white font-medium">
-                      Content Creator
-                    </Label>
-                  </div>
-                  
-                  <div className={`flex flex-col items-center justify-between rounded-md border-2 p-4 ${userRole === "entrepreneur" ? "border-cre8-blue bg-cre8-blue/10" : "border-white/10 hover:bg-white/5"}`}>
-                    <RadioGroupItem value="entrepreneur" id="entrepreneur" className="sr-only" />
-                    <Briefcase className="mb-3 h-6 w-6 text-cre8-blue" />
-                    <Label htmlFor="entrepreneur" className="text-center text-white font-medium">
-                      Entrepreneur
-                    </Label>
-                  </div>
-                  
-                  <div className={`flex flex-col items-center justify-between rounded-md border-2 p-4 ${userRole === "social-media-manager" ? "border-cre8-blue bg-cre8-blue/10" : "border-white/10 hover:bg-white/5"}`}>
-                    <RadioGroupItem value="social-media-manager" id="social-media-manager" className="sr-only" />
-                    <Users className="mb-3 h-6 w-6 text-cre8-blue" />
-                    <Label htmlFor="social-media-manager" className="text-center text-white font-medium">
-                      Social Media Manager
-                    </Label>
-                  </div>
-                </RadioGroup>
+                  <option value="">Select genre</option>
+                  {[
+                    { value: "educational", label: "Educational" },
+                    { value: "entertainment", label: "Entertainment" },
+                    { value: "gaming", label: "Gaming" },
+                    { value: "lifestyle", label: "Lifestyle" },
+                    { value: "music", label: "Music" },
+                    { value: "tech", label: "Tech" },
+                    { value: "travel", label: "Travel" },
+                    { value: "other", label: "Other" }
+                  ].map(({ value, label }) => (
+                    <option key={value} value={value} className="bg-gray-800">{label}</option>
+                  ))}
+                </select>
               </div>
-            )}
-            
-            {step === 2 && userRole === "content-creator" && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="contentGenre" className="text-white">Content Genre</Label>
-                  <Select 
-                    onValueChange={(value) => setFormData({...formData, contentGenre: value})}
-                    value={formData.contentGenre}
-                  >
-                    <SelectTrigger className="bg-cre8-dark/70 border-white/20 text-white">
-                      <SelectValue placeholder="Select genre" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-cre8-dark border-white/20">
-                      <SelectItem value="educational"><div className="flex items-center"><Image className="mr-2 h-4 w-4" />Educational</div></SelectItem>
-                      <SelectItem value="entertainment"><div className="flex items-center"><Image className="mr-2 h-4 w-4" />Entertainment</div></SelectItem>
-                      <SelectItem value="gaming"><div className="flex items-center"><Image className="mr-2 h-4 w-4" />Gaming</div></SelectItem>
-                      <SelectItem value="lifestyle"><div className="flex items-center"><Image className="mr-2 h-4 w-4" />Lifestyle</div></SelectItem>
-                      <SelectItem value="music"><div className="flex items-center"><Image className="mr-2 h-4 w-4" />Music</div></SelectItem>
-                      <SelectItem value="tech"><div className="flex items-center"><Image className="mr-2 h-4 w-4" />Tech</div></SelectItem>
-                      <SelectItem value="travel"><div className="flex items-center"><Image className="mr-2 h-4 w-4" />Travel</div></SelectItem>
-                      <SelectItem value="other"><div className="flex items-center"><Image className="mr-2 h-4 w-4" />Other</div></SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
-            
-            {step === 2 && userRole === "entrepreneur" && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="businessCategory" className="text-white">Business Category</Label>
-                  <Select 
-                    onValueChange={(value) => setFormData({...formData, businessCategory: value})}
-                    value={formData.businessCategory}
-                  >
-                    <SelectTrigger className="bg-cre8-dark/70 border-white/20 text-white">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-cre8-dark border-white/20">
-                      <SelectItem value="ecommerce"><div className="flex items-center"><ChartBar className="mr-2 h-4 w-4" />E-commerce</div></SelectItem>
-                      <SelectItem value="saas"><div className="flex items-center"><ChartBar className="mr-2 h-4 w-4" />SaaS</div></SelectItem>
-                      <SelectItem value="consulting"><div className="flex items-center"><ChartBar className="mr-2 h-4 w-4" />Consulting</div></SelectItem>
-                      <SelectItem value="agency"><div className="flex items-center"><ChartBar className="mr-2 h-4 w-4" />Agency</div></SelectItem>
-                      <SelectItem value="retail"><div className="flex items-center"><ChartBar className="mr-2 h-4 w-4" />Retail</div></SelectItem>
-                      <SelectItem value="manufacturing"><div className="flex items-center"><ChartBar className="mr-2 h-4 w-4" />Manufacturing</div></SelectItem>
-                      <SelectItem value="other"><div className="flex items-center"><ChartBar className="mr-2 h-4 w-4" />Other</div></SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="businessDescription" className="text-white">Business Description</Label>
-                  <Textarea 
-                    id="businessDescription"
-                    placeholder="Tell us more about your business..."
-                    className="bg-cre8-dark/70 border-white/20 text-white min-h-[100px]"
-                    value={formData.businessDescription}
-                    onChange={(e) => setFormData({...formData, businessDescription: e.target.value})}
-                  />
-                </div>
-              </div>
-            )}
-            
-            {step === 2 && userRole === "social-media-manager" && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="clientType" className="text-white">Type of Clients</Label>
-                  <Select 
-                    onValueChange={(value) => setFormData({...formData, clientType: value})}
-                    value={formData.clientType}
-                  >
-                    <SelectTrigger className="bg-cre8-dark/70 border-white/20 text-white">
-                      <SelectValue placeholder="Select client type" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-cre8-dark border-white/20">
-                      <SelectItem value="influencers">Influencers</SelectItem>
-                      <SelectItem value="small-businesses">Small Businesses</SelectItem>
-                      <SelectItem value="corporate">Corporate</SelectItem>
-                      <SelectItem value="individuals">Individuals</SelectItem>
-                      <SelectItem value="mixed">Mixed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="businessSize" className="text-white">Business Size</Label>
-                  <Select 
-                    onValueChange={(value) => setFormData({...formData, businessSize: value})}
-                    value={formData.businessSize}
-                  >
-                    <SelectTrigger className="bg-cre8-dark/70 border-white/20 text-white">
-                      <SelectValue placeholder="Select business size" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-cre8-dark border-white/20">
-                      <SelectItem value="solo">Solo</SelectItem>
-                      <SelectItem value="small-team">Small Team (2-5)</SelectItem>
-                      <SelectItem value="medium">Medium (6-20)</SelectItem>
-                      <SelectItem value="large">Large (20+)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="socialMediaNiche" className="text-white">Social Media Niche</Label>
-                  <Select 
-                    onValueChange={(value) => setFormData({...formData, socialMediaNiche: value})}
-                    value={formData.socialMediaNiche}
-                  >
-                    <SelectTrigger className="bg-cre8-dark/70 border-white/20 text-white">
-                      <SelectValue placeholder="Select niche" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-cre8-dark border-white/20">
-                      <SelectItem value="content-creation"><div className="flex items-center"><MessageSquare className="mr-2 h-4 w-4" />Content Creation</div></SelectItem>
-                      <SelectItem value="community-management"><div className="flex items-center"><MessageSquare className="mr-2 h-4 w-4" />Community Management</div></SelectItem>
-                      <SelectItem value="marketing-campaigns"><div className="flex items-center"><MessageSquare className="mr-2 h-4 w-4" />Marketing Campaigns</div></SelectItem>
-                      <SelectItem value="analytics"><div className="flex items-center"><MessageSquare className="mr-2 h-4 w-4" />Analytics & Reporting</div></SelectItem>
-                      <SelectItem value="full-service"><div className="flex items-center"><MessageSquare className="mr-2 h-4 w-4" />Full Service</div></SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
-          </CardContent>
+            </div>
+          )}
           
-          <CardFooter className="flex justify-end">
-            <Button
+          {step === 2 && userRole === "entrepreneur" && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">Tell us about your business</h3>
+                <p className="text-gray-300 text-sm">This helps us tailor our features to your needs</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-white text-sm font-medium">Business Category *</label>
+                  <select
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={formData.businessCategory}
+                    onChange={(e) => handleFormDataChange('businessCategory', e.target.value as BusinessCategory)}
+                  >
+                    <option value="">Select category</option>
+                    {[
+                      { value: "ecommerce", label: "E-commerce" },
+                      { value: "saas", label: "SaaS" },
+                      { value: "consulting", label: "Consulting" },
+                      { value: "agency", label: "Agency" },
+                      { value: "retail", label: "Retail" },
+                      { value: "manufacturing", label: "Manufacturing" },
+                      { value: "other", label: "Other" }
+                    ].map(({ value, label }) => (
+                      <option key={value} value={value} className="bg-gray-800">{label}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-white text-sm font-medium">Business Description *</label>
+                  <textarea 
+                    placeholder="Tell us more about your business..."
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={formData.businessDescription}
+                    onChange={(e) => handleFormDataChange('businessDescription', e.target.value)}
+                    maxLength={500}
+                  />
+                  <div className="text-xs text-gray-400 text-right">
+                    {formData.businessDescription.length}/500
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {step === 2 && userRole === "social-media-manager" && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">Tell us about your social media management</h3>
+                <p className="text-gray-300 text-sm">This helps us tailor our features to your needs</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-white text-sm font-medium">Type of Clients *</label>
+                  <select
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={formData.clientType}
+                    onChange={(e) => handleFormDataChange('clientType', e.target.value as ClientType)}
+                  >
+                    <option value="">Select client type</option>
+                    {[
+                      { value: "influencers", label: "Influencers" },
+                      { value: "small-businesses", label: "Small Businesses" },
+                      { value: "corporate", label: "Corporate" },
+                      { value: "individuals", label: "Individuals" },
+                      { value: "mixed", label: "Mixed" }
+                    ].map(({ value, label }) => (
+                      <option key={value} value={value} className="bg-gray-800">{label}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-white text-sm font-medium">Team Size *</label>
+                  <select
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={formData.businessSize}
+                    onChange={(e) => handleFormDataChange('businessSize', e.target.value as BusinessSize)}
+                  >
+                    <option value="">Select team size</option>
+                    {[
+                      { value: "solo", label: "Solo" },
+                      { value: "small-team", label: "Small Team (2-5)" },
+                      { value: "medium", label: "Medium (6-20)" },
+                      { value: "large", label: "Large (20+)" }
+                    ].map(({ value, label }) => (
+                      <option key={value} value={value} className="bg-gray-800">{label}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-white text-sm font-medium">Social Media Niche *</label>
+                  <select
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={formData.socialMediaNiche}
+                    onChange={(e) => handleFormDataChange('socialMediaNiche', e.target.value as SocialMediaNiche)}
+                  >
+                    <option value="">Select niche</option>
+                    {[
+                      { value: "content-creation", label: "Content Creation" },
+                      { value: "community-management", label: "Community Management" },
+                      { value: "marketing-campaigns", label: "Marketing Campaigns" },
+                      { value: "analytics", label: "Analytics & Reporting" },
+                      { value: "full-service", label: "Full Service" }
+                    ].map(({ value, label }) => (
+                      <option key={value} value={value} className="bg-gray-800">{label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Navigation buttons */}
+          <div className="flex justify-between items-center mt-8 pt-6 border-t border-white/10">
+            {step === 2 && (
+              <button
+                onClick={handleBack}
+                className="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white transition-colors"
+                disabled={loading}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back</span>
+              </button>
+            )}
+            
+            <button
               onClick={handleNext}
-              className="bg-gradient-to-r from-cre8-blue to-cre8-purple hover:opacity-90"
               disabled={loading}
+              className="ml-auto flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
             >
-              {loading ? "Saving..." : step === 2 ? "Complete Setup" : "Next"}
-            </Button>
-          </CardFooter>
-        </Card>
+              {loading ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              ) : (
+                <>
+                  <span>{step === 2 ? "Complete Setup" : "Next"}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+        
+        {/* Toast notification */}
+        {toastMessage && (
+          <div className={`fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+            toastMessage.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+          } text-white`}>
+            {toastMessage.message}
+          </div>
+        )}
       </div>
     </div>
   );
