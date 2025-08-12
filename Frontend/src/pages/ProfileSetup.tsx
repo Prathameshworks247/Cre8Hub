@@ -142,9 +142,28 @@ const ProfileSetup = () => {
   // Success page
   if (step === 3) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-black py-12 px-4 sm:px-6 lg:px-8">
+                    <div className="fixed inset-0 z-0">
+        {/* Layer 1 - Larger, more blurred */}
+        <div className="absolute w-[500px] h-[500px] bg-blue-500 rounded-full mix-blend-screen filter blur-3xl opacity-30 -top-20 -left-20 animate-pulse" 
+             style={{ animation: 'blob 10s infinite' }} />
+        <div className="absolute w-[400px] h-[400px] bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-35 -top-10 -right-10" 
+             style={{ animation: 'blob 8s infinite 2s' }} />
+        
+        {/* Layer 2 - Medium, sharper */}
+        <div className="absolute w-80 h-80 bg-cyan-400 rounded-full mix-blend-screen filter blur-xl opacity-50 top-1/4 right-1/4" 
+             style={{ animation: 'blob 12s infinite 1s' }} />
+        <div className="absolute w-72 h-72 bg-pink-500 rounded-full mix-blend-screen filter blur-xl opacity-45 bottom-1/4 left-1/3" 
+             style={{ animation: 'blob 9s infinite 4s' }} />
+        
+        {/* Layer 3 - Smaller, very sharp for definition */}
+        <div className="absolute w-48 h-48 bg-emerald-400 rounded-full mix-blend-screen filter blur-lg opacity-60 top-1/2 left-1/4" 
+             style={{ animation: 'blob 7s infinite 3s' }} />
+        <div className="absolute w-56 h-56 bg-yellow-400 rounded-full mix-blend-screen filter blur-lg opacity-40 bottom-1/3 right-1/3" 
+             style={{ animation: 'blob 11s infinite 5s' }} />
+      </div>
         <div className="w-full max-w-md space-y-8">
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-8 text-center">
+          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl p-8 text-center">
             <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-500/20 mb-6">
               <CheckCircle className="h-10 w-10 text-green-400" />
             </div>
@@ -182,7 +201,7 @@ const ProfileSetup = () => {
                 onClick={() => window.location.href = '/dashboard'}
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105"
               >
-                Go to Dashboard
+                Generate Content
               </button>
               
               <button
@@ -199,12 +218,31 @@ const ProfileSetup = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-black py-12 px-4 sm:px-6 lg:px-8">
+      <div className="fixed inset-0 z-0">
+        {/* Layer 1 - Larger, more blurred */}
+        <div className="absolute w-[500px] h-[500px] bg-blue-500 rounded-full mix-blend-screen filter blur-3xl opacity-30 -top-20 -left-20 animate-pulse" 
+             style={{ animation: 'blob 10s infinite' }} />
+        <div className="absolute w-[400px] h-[400px] bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-35 -top-10 -right-10" 
+             style={{ animation: 'blob 8s infinite 2s' }} />
+        
+        {/* Layer 2 - Medium, sharper */}
+        <div className="absolute w-80 h-80 bg-cyan-400 rounded-full mix-blend-screen filter blur-xl opacity-50 top-1/4 right-1/4" 
+             style={{ animation: 'blob 12s infinite 1s' }} />
+        <div className="absolute w-72 h-72 bg-pink-500 rounded-full mix-blend-screen filter blur-xl opacity-45 bottom-1/4 left-1/3" 
+             style={{ animation: 'blob 9s infinite 4s' }} />
+        
+        {/* Layer 3 - Smaller, very sharp for definition */}
+        <div className="absolute w-48 h-48 bg-emerald-400 rounded-full mix-blend-screen filter blur-lg opacity-60 top-1/2 left-1/4" 
+             style={{ animation: 'blob 7s infinite 3s' }} />
+        <div className="absolute w-56 h-56 bg-yellow-400 rounded-full mix-blend-screen filter blur-lg opacity-40 bottom-1/3 right-1/3" 
+             style={{ animation: 'blob 11s infinite 5s' }} />
+      </div>
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-            <span className="text-2xl font-bold text-white">C8</span>
+          <div className="mx-auto h-48 w-48 -mb-10 flex items-center justify-center ">
+            <img src="../../public/lovable-uploads/logomain.png" alt="" />
           </div>
           <h2 className="text-3xl font-bold text-white">Set Up Your Profile</h2>
           <p className="mt-2 text-sm text-gray-300">
@@ -223,7 +261,7 @@ const ProfileSetup = () => {
           </div>
         </div>
         
-        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-6">
+        <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl p-6">
           {/* Step 1: Role Selection */}
           {step === 1 && (
             <div className="space-y-6">
@@ -432,7 +470,7 @@ const ProfileSetup = () => {
             <button
               onClick={handleNext}
               disabled={loading}
-              className="ml-auto flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+              className="ml-auto flex rounded-full items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-2 px-6 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
             >
               {loading ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

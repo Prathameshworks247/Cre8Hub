@@ -57,26 +57,40 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-cre8-dark to-black py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-cre8-dark to-black  px-4 sm:px-6 lg:px-8">
+      <div className="fixed inset-0 z-0">
+        {/* Layer 1 - Larger, more blurred */}
+        <div className="absolute w-[500px] h-[500px] bg-blue-500 rounded-full mix-blend-screen filter blur-3xl opacity-30 -top-20 -left-20 animate-pulse" 
+             style={{ animation: 'blob 10s infinite' }} />
+        <div className="absolute w-[400px] h-[400px] bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-35 -top-10 -right-10" 
+             style={{ animation: 'blob 8s infinite 2s' }} />
+        
+        {/* Layer 2 - Medium, sharper */}
+        <div className="absolute w-80 h-80 bg-cyan-400 rounded-full mix-blend-screen filter blur-xl opacity-50 top-1/4 right-1/4" 
+             style={{ animation: 'blob 12s infinite 1s' }} />
+        <div className="absolute w-72 h-72 bg-pink-500 rounded-full mix-blend-screen filter blur-xl opacity-45 bottom-1/4 left-1/3" 
+             style={{ animation: 'blob 9s infinite 4s' }} />
+        
+        {/* Layer 3 - Smaller, very sharp for definition */}
+        <div className="absolute w-48 h-48 bg-emerald-400 rounded-full mix-blend-screen filter blur-lg opacity-60 top-1/2 left-1/4" 
+             style={{ animation: 'blob 7s infinite 3s' }} />
+        <div className="absolute w-56 h-56 bg-yellow-400 rounded-full mix-blend-screen filter blur-lg opacity-40 bottom-1/3 right-1/3" 
+             style={{ animation: 'blob 11s infinite 5s' }} />
+      </div>
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-block">
             <img 
               src="/lovable-uploads/logomain.png" 
               alt="CRE8HUB Logo" 
-              className="h-48 mx-auto "
+              className="h-48 mx-auto -mb-10"
             />
           </Link>
           <h2 className="mt-2 text-3xl font-bold text-white">Welcome back</h2>
-          <p className="mt-2 text-sm text-gray-400">
-            Don't have an account?{" "}
-            <Link to="/signup" className="font-medium text-cre8-blue hover:text-cre8-purple">
-              Sign up
-            </Link>
-          </p>
+
         </div>
         
-        <Card className="bg-cre8-dark/50 backdrop-blur-lg border-white/10">
+        <Card className="bg-white/10 rounded-xl backdrop-blur-xl border-white/10">
           <CardHeader>
             <CardTitle className="text-white text-xl">Sign In</CardTitle>
             <CardDescription className="text-gray-400">
@@ -145,7 +159,7 @@ const SignIn = () => {
 
                 <Button
                   type="submit"
-                  className="w-full mt-6 bg-gradient-to-r from-cre8-blue to-cre8-purple hover:opacity-90"
+                  className="w-full mt-6 rounded-full bg-gradient-to-r from-cre8-blue to-cre8-purple hover:opacity-90"
                   disabled={isLoading}
                 >
                   {isLoading ? "Signing In..." : "Sign In"}
