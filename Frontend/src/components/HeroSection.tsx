@@ -12,9 +12,9 @@ const HeroSection = () => {
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="space-y-8">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl  font-abril text-white leading-tight">
             Unleash Your
-            <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-500 to-purple-500 font-abril bg-clip-text text-transparent">
               {" "}Creative Potential
             </span>
           </h1>
