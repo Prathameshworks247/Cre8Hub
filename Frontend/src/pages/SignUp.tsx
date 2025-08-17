@@ -10,7 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useBackendAuth } from "@/hooks/useBackendAuth";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -26,7 +26,7 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signUp } = useAuth();
+  const { signUp } = useBackendAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,26 +41,25 @@ const SignUp = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     
-    const { data, error } = await signUp(values.email, values.password, values.name);
+    const { error } = await signUp(values.email, values.password, values.name);
     
     setIsLoading(false);
     
     if (error) {
       toast({
         title: "Error creating account",
-        description: error.message,
+        description: error,
         variant: "destructive",
       });
       return;
     }
 
-    if (data.user) {
-      toast({
-        title: "Account created!",
-        description: "You have successfully signed up.",
-      });
-      navigate("/profile-setup");
-    }
+    // If no error, sign up was successful
+    toast({
+      title: "Account created!",
+      description: "You have successfully signed up.",
+    });
+    navigate("/");
   };
 
   return (

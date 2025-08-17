@@ -10,7 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useBackendAuth } from "@/hooks/useBackendAuth";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -21,7 +21,7 @@ const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn } = useAuth();
+  const { signIn } = useBackendAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,26 +34,25 @@ const SignIn = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     
-    const { data, error } = await signIn(values.email, values.password);
+    const { error } = await signIn(values.email, values.password);
     
     setIsLoading(false);
     
     if (error) {
       toast({
         title: "Error signing in",
-        description: error.message,
+        description: error,
         variant: "destructive",
       });
       return;
     }
 
-    if (data.user) {
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully signed in.",
-      });
-      navigate("/");
-    }
+    // If no error, sign in was successful
+    toast({
+      title: "Welcome back!",
+      description: "You have successfully signed in.",
+    });
+    navigate("/");
   };
 
   return (

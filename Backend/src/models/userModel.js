@@ -252,7 +252,7 @@ const userSchema = new mongoose.Schema({
       timeline: {
         type: String,
         enum: {
-          values: ['immediate', 'within-month', 'within-quarter', 'within-year', 'ongoing'],
+          values: ['immediate', 'within-month', 'within-quarter', 'within-year', 'ongoing', 'flexible'],
           message: 'Timeline must be one of the specified values'
         },
         default: 'flexible'

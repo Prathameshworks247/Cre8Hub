@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useBackendAuth } from "@/hooks/useBackendAuth";
 import HeroSection from "@/components/HeroSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import MockupsSection from "@/components/MockupsSection";
@@ -9,6 +11,10 @@ import Footer from "@/components/Footer";
 import { Header } from "@/components/Header";
 
 const Landing = () => {
+  const navigate = useNavigate();
+  const { user, loading } = useBackendAuth();
+
+
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;

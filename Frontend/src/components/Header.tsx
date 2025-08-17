@@ -12,11 +12,31 @@ import {
   NavbarButton,
 } from "../components/ui/resizable-navbar";
 import { useState } from "react";
+import { useBackendAuth } from "@/hooks/useBackendAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { User, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useBackendAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
   const navItems = [
     {
       name: "Home",
@@ -42,10 +62,41 @@ export const Header = () => {
         <NavItems
           items={navItems}
         />
-        {/* <NavbarButton href="/login">Sign In</NavbarButton> */}
-        <div className="flex align-middle justify-center  gap-7 w-[30%]">
-        <NavbarButton variant="primary" href="/signup">Sign Up</NavbarButton>
-        </div>
+<div className="flex items-center justify-center gap-7 w-[30%]">
+  {user ? (
+    <div className="flex items-center space-x-3">
+      {/* Dashboard / Avatar Button */}
+      <Button
+        onClick={() => navigate("/dashboard")}
+        variant="ghost"
+        className="text-white hover:bg-white/10 h-8 w-8 p-0"
+        aria-label="Go to dashboard"
+      >
+        <Avatar className="h-8 w-8">
+          <AvatarImage src={user.avatar || ""} />
+          <AvatarFallback className="bg-blue-600 text-white text-sm">
+            {user.name ? getInitials(user.name) : "U"}
+          </AvatarFallback>
+        </Avatar>
+      </Button>
+
+      {/* Sign Out Button */}
+      <Button
+        onClick={handleSignOut}
+        size="icon"
+        className="text-gray-400 hover:text-white hover:bg-white/10 h-8 w-8 p-0 relative z-10"
+        aria-label="Sign out"
+      >
+        <LogOut className="h-4 w-4" />
+      </Button>
+    </div>
+  ) : (
+    <NavbarButton variant="primary" href="/signup">
+      Sign Up
+    </NavbarButton>
+  )}
+</div>
+
         
       </NavBody>
 
@@ -74,13 +125,40 @@ export const Header = () => {
               </a>
             ))}
             <div className="flex w-full justify-center flex-col gap-4">
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Sign Up
-              </NavbarButton>
+              {user ? (
+                <>
+                  <Button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate("/dashboard");
+                    }}
+                    variant="outline"
+                    className="w-full border-white/20 text-white hover:bg-white/10"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleSignOut();
+                    }}
+                    variant="outline"
+                    className="w-full border-white/20 text-white hover:bg-white/10"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <NavbarButton
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  variant="primary"
+                  className="w-full"
+                >
+                  Sign Up
+                </NavbarButton>
+              )}
             </div>
           </MobileNavMenu>
         </MobileNav>

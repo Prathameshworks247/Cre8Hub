@@ -25,7 +25,12 @@ app.use('/api/', limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    'http://localhost:8080', // Vite default port
+    'http://localhost:5173', // Vite alternative port
+    'http://localhost:3000'  // React default port
+  ],
   credentials: true
 }));
 

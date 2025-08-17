@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
 import { Briefcase, Pen, Users, Image, ChartBar, MessageSquare, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { useBackendProfile } from "@/hooks/useBackendProfile";
+import { useNavigate } from "react-router-dom";
 
 // Type definitions
 type UserRole = "content-creator" | "entrepreneur" | "social-media-manager";
@@ -27,9 +29,11 @@ interface UserProfile {
 const ProfileSetup = () => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
-  const [loading, setLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [toastMessage, setToastMessage] = useState<{type: 'success' | 'error', message: string} | null>(null);
+  
+  const { loading, updateUserRole, createContentCreatorProfile, createEntrepreneurProfile, createSocialMediaManagerProfile } = useBackendProfile();
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState<FormData>({
     contentGenre: "",
@@ -91,6 +95,14 @@ const ProfileSetup = () => {
   const handleNext = async () => {
     if (step === 1) {
       if (!validateStep1()) return;
+      
+      // Update user role
+      const { error } = await updateUserRole(userRole!);
+      if (error) {
+        showToast('error', error);
+        return;
+      }
+      
       setStep(2);
       return;
     }
@@ -98,24 +110,44 @@ const ProfileSetup = () => {
     if (step === 2) {
       if (!validateStep2()) return;
       
-      setLoading(true);
+      let error: string | null = null;
       
-      // Simulate API call delay
-      setTimeout(() => {
-        const profile: UserProfile = {
-          role: userRole!,
-          formData: { ...formData },
-          completedAt: new Date().toISOString()
-        };
-        
-        setUserProfile(profile);
-        setLoading(false);
-        setStep(3);
-        showToast('success', 'Profile setup completed successfully!');
-        
-        // Log the saved data to console
-        console.log('Profile saved:', profile);
-      }, 1500);
+      // Create role-specific profile
+      if (userRole === 'content-creator') {
+        const result = await createContentCreatorProfile(formData.contentGenre as any);
+        error = result.error || null;
+      } else if (userRole === 'entrepreneur') {
+        const result = await createEntrepreneurProfile(
+          formData.businessCategory as any,
+          formData.businessDescription
+        );
+        error = result.error || null;
+      } else if (userRole === 'social-media-manager') {
+        const result = await createSocialMediaManagerProfile(
+          formData.clientType as any,
+          formData.businessSize as any,
+          formData.socialMediaNiche as any
+        );
+        error = result.error || null;
+      }
+      
+      if (error) {
+        showToast('error', error);
+        return;
+      }
+      
+      const profile: UserProfile = {
+        role: userRole!,
+        formData: { ...formData },
+        completedAt: new Date().toISOString()
+      };
+      
+      setUserProfile(profile);
+      setStep(3);
+      showToast('success', 'Profile setup completed successfully!');
+      
+      // Log the saved data to console
+      console.log('Profile saved:', profile);
     }
   };
 
@@ -198,10 +230,10 @@ const ProfileSetup = () => {
             
             <div className="space-y-3">
               <button
-                onClick={() => window.location.href = '/dashboard'}
+                onClick={() => navigate('/dashboard')}
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105"
               >
-                Generate Content
+                Go to Dashboard
               </button>
               
               <button
