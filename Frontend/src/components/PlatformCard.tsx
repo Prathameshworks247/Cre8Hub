@@ -1,9 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Youtube, Instagram, Twitter, Linkedin, Sparkles } from "lucide-react";
+import { Youtube, Instagram, Twitter, Linkedin, Sparkles, Loader2, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { apiService } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 interface PlatformCardProps {
   platform: "youtube" | "instagram" | "twitter" | "linkedin";
@@ -28,8 +31,12 @@ const platformColors = {
 };
 
 export function PlatformCard({ platform, title, description, onSelect, isSelected }: PlatformCardProps) {
+  const { toast } = useToast();
   const [isPersonifyEnabled, setIsPersonifyEnabled] = useState(false);
   const [showTranscriptRequest, setShowTranscriptRequest] = useState(false);
+  const [channelId, setChannelId] = useState('');
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractionStatus, setExtractionStatus] = useState<'none' | 'extracting' | 'completed' | 'error'>('none');
   
   const Icon = platformIcons[platform];
   const colorClass = platformColors[platform];
@@ -43,9 +50,73 @@ export function PlatformCard({ platform, title, description, onSelect, isSelecte
     }
   };
 
+  const getChannelIdFromUrl = (url: string) => {
+    // Extract channel ID from various YouTube URL formats
+    const patterns = [
+      /youtube\.com\/channel\/([a-zA-Z0-9_-]+)/,
+      /youtube\.com\/c\/([a-zA-Z0-9_-]+)/,
+      /youtube\.com\/@([a-zA-Z0-9_-]+)/
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return url; // Return as-is if no pattern matches
+  };
+
+  const handleExtractPersona = async () => {
+    if (!channelId.trim()) {
+      toast({
+        title: "Channel ID required",
+        description: "Please enter a valid YouTube channel ID",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsExtracting(true);
+    setExtractionStatus('extracting');
+    
+    try {
+      const result = await apiService.extractPersonaFromYouTube(channelId);
+      
+      if (result.error) {
+        setExtractionStatus('error');
+        toast({
+          title: "Persona extraction failed",
+          description: result.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setExtractionStatus('completed');
+      toast({
+        title: "Persona extracted successfully!",
+        description: "Your YouTube persona has been analyzed and saved",
+      });
+      
+      // Clear the input and close the request after successful extraction
+      setChannelId('');
+      setShowTranscriptRequest(false);
+    } catch (error) {
+      setExtractionStatus('error');
+      toast({
+        title: "Error",
+        description: "Failed to extract persona from YouTube",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
   const handleGrantAccess = () => {
-    // Here we would integrate with YouTube API
-    setShowTranscriptRequest(false);
+    // This now triggers the persona extraction flow
+    if (channelId.trim()) {
+      handleExtractPersona();
+    }
   };
 
   return (
@@ -88,30 +159,69 @@ export function PlatformCard({ platform, title, description, onSelect, isSelecte
         </div>
         
         {showTranscriptRequest && (
-          <div className="mt-4 p-4 bg-white/20 rounded-xl   space-y-3">
+          <div className="mt-4 p-4 bg-white/20 rounded-xl space-y-3">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-cosmic-glow" />
               <h4 className="font-medium text-sm">Persona Enhancement Ready</h4>
             </div>
             <p className="text-xs text-muted-foreground">
-              Grant access to your YouTube channel transcripts to create personalized content that matches your unique voice and style.
+              Enter your YouTube channel to extract your unique content persona and create personalized content.
             </p>
+            
+            <div className="space-y-2">
+              <Input
+                placeholder="https://youtube.com/@yourchannel or UC..."
+                value={channelId}
+                onChange={(e) => setChannelId(getChannelIdFromUrl(e.target.value))}
+                className="bg-white/10 border-white/20 text-white text-xs"
+              />
+              <p className="text-xs text-muted-foreground">
+                Paste your YouTube channel URL or channel ID
+              </p>
+            </div>
+            
             <div className="flex space-x-2">
               <Button 
                 size="sm" 
                 onClick={handleGrantAccess}
-                className="bg-gray-800 rounded-full hover:bg-white hover:text-black"
+                disabled={isExtracting || !channelId.trim()}
+                className="bg-gray-800 rounded-full hover:bg-white hover:text-black disabled:opacity-50"
               >
-                Grant Access
+                {isExtracting ? (
+                  <>
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                    Extracting...
+                  </>
+                ) : extractionStatus === 'completed' ? (
+                  <>
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Extracted
+                  </>
+                ) : (
+                  'Extract Persona'
+                )}
               </Button>
               <Button 
                 size="sm" 
                 onClick={() => setShowTranscriptRequest(false)}
-                className=" hover:text-black"
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10"
               >
                 Later
               </Button>
             </div>
+            
+            {extractionStatus === 'completed' && (
+              <div className="text-xs text-green-400 text-center bg-green-500/10 rounded-lg p-2">
+                ✓ Persona extracted successfully!
+              </div>
+            )}
+            
+            {extractionStatus === 'error' && (
+              <div className="text-xs text-red-400 text-center bg-red-500/10 rounded-lg p-2">
+                ✗ Failed to extract persona. Please try again.
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL ;
 
 interface ApiResponse<T = any> {
   data?: T;
@@ -111,7 +111,20 @@ class ApiService {
       body: JSON.stringify(roleData),
     });
   }
+  // Persona endpoints
+  async extractPersonaFromYouTube(channelId: string) {
+    return this.request('/youtube/extract-persona', {
+      method: 'POST',
+      body: JSON.stringify({ channelId }),
+    });
+  }
 
+  async saveManualPersona(persona: any) {
+    return this.request('/youtube/manual-persona', {
+      method: 'POST',
+      body: JSON.stringify({ persona }),
+    });
+  }
   async updatePersona(personaData: any) {
     return this.request('/users/persona', {
       method: 'PUT',
