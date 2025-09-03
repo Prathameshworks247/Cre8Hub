@@ -1,38 +1,39 @@
 
-import { Brain, BarChart3, Users, Zap, Target, Shield } from "lucide-react";
+import { Brain,Image, BarChart3,VideoIcon,Sparkle, Users, Zap, Target, Shield } from "lucide-react";
 
 const features = [
   {
     icon: Brain,
-    title: "AI-Powered Content Optimization",
-    description: "Let our advanced AI analyze and optimize your content for maximum engagement and reach."
+    title: "Cre8Echo",
+    description: "Smart Content Ideation – Generate fresh, trend-aligned content ideas and scripts tailored to your unique style and audience."
+  },
+  {
+    icon: Image,
+    title: "Cre8Canvas",
+    description: "AI Thumbnail Designer – Create eye-catching, high-converting thumbnails in seconds with our AI-powered image generation tools."
+  },
+  {
+    icon: VideoIcon,
+    title: "Cre8Motion",
+    description: "Next-Gen Video Creation – Transform scripts into engaging short-form videos with automated editing and smart visual enhancements."
   },
   {
     icon: BarChart3,
-    title: "Advanced Analytics",
-    description: "Get deep insights into your audience behavior and content performance with detailed analytics."
-  },
-  {
-    icon: Users,
-    title: "Community Building",
-    description: "Connect with fellow creators and build a strong community around your brand."
-  },
-  {
-    icon: Zap,
-    title: "Automated Workflows",
-    description: "Streamline your content creation process with intelligent automation tools."
+    title: "Cre8Sight",
+    description: "Creator Analytics – Track engagement, identify trends, and understand what drives growth with advanced performance insights."
   },
   {
     icon: Target,
-    title: "Audience Targeting",
-    description: "Reach the right audience at the right time with precision targeting capabilities."
+    title: "Cre8Reach",
+    description: "Personalized Audience Growth – Reach more viewers with AI-driven targeting, posting strategies, and platform-specific recommendations."
   },
   {
-    icon: Shield,
-    title: "Brand Protection",
-    description: "Protect your brand identity and maintain consistency across all platforms."
+    icon: Sparkle,
+    title: "Cre8Flow",
+    description: "Creator Workflow Automation – Save time by automating repetitive tasks — from ideation to publishing — so you can focus on creating."
   }
 ];
+
 
 const FeaturesSection = () => {
   return (

@@ -2,18 +2,17 @@
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
-
 const plans = [
   {
-    name: "Free",
+    name: "Starter",
     price: "₹0",
     period: "forever",
-    description: "Perfect for getting started",
+    description: "Perfect to explore Cre8Hub",
     features: [
-      "Basic content optimization",
-      "5 AI suggestions per month",
-      "Basic analytics",
-      "Community access"
+      "Basic AI text ideation (Cre8Echo)",
+      "10 AI suggestions per month",
+      "Starter analytics dashboard",
+      "Access to creator community"
     ],
     buttonText: "Get Started",
     buttonVariant: "outline" as const,
@@ -23,14 +22,14 @@ const plans = [
     name: "Creator",
     price: "₹499",
     period: "per month",
-    description: "Best for individual creators",
+    description: "Best for serious individual creators",
     features: [
-      "Advanced AI optimization",
-      "Unlimited AI suggestions",
-      "Advanced analytics & insights",
-      "Priority community access",
-      "Content scheduling",
-      "Brand protection tools"
+      "Unlimited AI ideation & optimization (Cre8Echo)",
+      "AI thumbnail generation (Cre8Canvas)",
+      "Advanced audience insights",
+      "Content scheduling & reminders",
+      "Priority access to community",
+      "Basic brand consistency tools"
     ],
     buttonText: "Start Creating",
     buttonVariant: "default" as const,
@@ -40,21 +39,22 @@ const plans = [
     name: "Pro",
     price: "₹999",
     period: "per month",
-    description: "For teams and agencies",
+    description: "For teams and growing agencies",
     features: [
       "Everything in Creator",
-      "Team collaboration tools",
-      "White-label solutions",
-      "Advanced automation",
-      "Custom integrations",
-      "Dedicated support",
-      "Multi-account management"
+      "AI video editing suite ",
+      "Team collaboration & shared libraries",
+      "White-label & custom branding",
+      "Advanced workflow automation",
+      "Multi-platform publishing",
+      "Dedicated priority support"
     ],
     buttonText: "Go Pro",
     buttonVariant: "default" as const,
     popular: false
   }
 ];
+
 
 const PricingSection = () => {
   return (

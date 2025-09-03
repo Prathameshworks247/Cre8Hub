@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import { Youtube, Instagram, Twitter, Linkedin, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,8 @@ interface PlatformCardProps {
   description: string;
   onSelect: () => void;
   isSelected?: boolean;
+  setShowTranscriptRequest: (show: boolean) => void;
+  showTranscriptRequest: boolean;
 }
 
 const platformIcons = {
@@ -27,9 +29,8 @@ const platformColors = {
   linkedin: "text-blue-600",
 };
 
-export function PlatformCard({ platform, title, description, onSelect, isSelected }: PlatformCardProps) {
+export function PlatformCard({ platform, title, description, onSelect, isSelected, setShowTranscriptRequest,  showTranscriptRequest}: PlatformCardProps) {
   const [isPersonifyEnabled, setIsPersonifyEnabled] = useState(false);
-  const [showTranscriptRequest, setShowTranscriptRequest] = useState(false);
   
   const Icon = platformIcons[platform];
   const colorClass = platformColors[platform];
@@ -45,7 +46,7 @@ export function PlatformCard({ platform, title, description, onSelect, isSelecte
 
   const handleGrantAccess = () => {
     // Here we would integrate with YouTube API
-    setShowTranscriptRequest(false);
+    setShowTranscriptRequest(true);
   };
 
   return (
@@ -87,7 +88,7 @@ export function PlatformCard({ platform, title, description, onSelect, isSelecte
           )}
         </div>
         
-        {showTranscriptRequest && (
+        {showTranscriptRequest &&platform== "youtube" && (
           <div className="mt-4 p-4 bg-white/20 rounded-xl   space-y-3">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-cosmic-glow" />
