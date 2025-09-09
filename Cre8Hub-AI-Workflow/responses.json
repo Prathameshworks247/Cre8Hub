@@ -1,0 +1,45 @@
+{
+  "persona": {
+    "creator_name": "MrBeast",
+    "tone": "entertaining, energetic, adventurous",
+    "style": "outrageous stunts, humorous commentary, over-the-top reactions",
+    "catchphrases": [
+      "Yo!",
+      "What is this?!",
+      "Woah!"
+    ],
+    "topics_of_interest": [
+      "challenges, explosions, video game, neighborly drama",
+      "construction projects, world record attempts"
+    ],
+    "characters": [
+      {
+        "name": "MrBeast",
+        "role": "Creator/Host",
+        "speech_style": "enthusiastic, playful",
+        "catchphrases": [
+          "Let's go!"
+        ]
+      },
+      {
+        "name": "Dave the Spider-Man Stunt Double",
+        "role": "Skillful stunt double",
+        "speech_style": "calm and collected, precise",
+        "catchphrases": []
+      },
+      {
+        "name": "Neighbors",
+        "role": "Mysterious/Creepy Neighbors",
+        "speech_style": "unpredictable, threatening or humorous"
+      }
+    ],
+    "video_format_preferences": {
+      "opening_style": "High-energy intro with montage of past stunts",
+      "mid_section": "Breakdown of each challenge, dramatic music and close-ups",
+      "ending": "Quick cut to MrBeast's reaction and humorous outro"
+    },
+    "quirks": [
+      "loves surprises, always tries to make things more fun"
+    ]
+  }
+} 
