@@ -76,13 +76,23 @@ export function PlatformCard({ platform, title, description, onSelect, isSelecte
       });
       return;
     }
-
+  
+    const userId = localStorage.getItem("userId"); // must be set at login/signup
+    if (!userId) {
+      toast({
+        title: "User not logged in",
+        description: "Please sign in before extracting persona",
+        variant: "destructive",
+      });
+      return;
+    }
+  
     setIsExtracting(true);
     setExtractionStatus('extracting');
-    
+  
     try {
-      const result = await apiService.extractPersonaFromYouTube(channelId);
-      
+      const result = await apiService.extractPersonaFromYouTube(channelId, userId);
+  
       if (result.error) {
         setExtractionStatus('error');
         toast({
@@ -92,14 +102,13 @@ export function PlatformCard({ platform, title, description, onSelect, isSelecte
         });
         return;
       }
-
+  
       setExtractionStatus('completed');
       toast({
         title: "Persona extracted successfully!",
         description: "Your YouTube persona has been analyzed and saved",
       });
-      
-      // Clear the input and close the request after successful extraction
+  
       setChannelId('');
       setShowTranscriptRequest(false);
     } catch (error) {

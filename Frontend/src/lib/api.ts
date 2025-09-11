@@ -112,12 +112,12 @@ class ApiService {
     });
   }
   // Persona endpoints
-  async extractPersonaFromYouTube(channelId: string) {
-    return this.request('/youtube/extract-persona', {
-      method: 'POST',
-      body: JSON.stringify({ channelId }),
-    });
-  }
+async extractPersonaFromYouTube(channelId: string, userId: string) {
+  return this.request('/youtube/extract-persona', {
+    method: 'POST',
+    body: JSON.stringify({ channelId, userId }),
+  });
+}
 
   async saveManualPersona(persona: any) {
     return this.request('/youtube/manual-persona', {
