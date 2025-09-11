@@ -112,3 +112,7 @@ pnpm-lock.yaml
 
 # Local development files
 .local 
+
+user_model_diagram.mermaid
+
+DS_Store
