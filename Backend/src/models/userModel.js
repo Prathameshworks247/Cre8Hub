@@ -545,6 +545,34 @@ const userSchema = new mongoose.Schema({
     }
   },
 
+  // OAuth tokens for YouTube integration
+  youtubeTokens: {
+    accessToken: {
+      type: String,
+      select: false // Don't include in queries by default for security
+    },
+    refreshToken: {
+      type: String,
+      select: false // Don't include in queries by default for security
+    },
+    expiresAt: {
+      type: Date,
+      default: null
+    },
+    scope: [{
+      type: String,
+      trim: true
+    }],
+    connectedAt: {
+      type: Date,
+      default: null
+    },
+    isConnected: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   // Persona data (for your persona extraction feature)
   persona: {
     extractedFrom: {
@@ -771,6 +799,51 @@ userSchema.methods.addPastOutput = function(outputData) {
 // Method to update persona
 userSchema.methods.updatePersona = function(personaData) {
   Object.assign(this.persona, personaData, { extractedAt: new Date() });
+  return this.save();
+};
+
+// Method to store YouTube OAuth tokens
+userSchema.methods.storeYouTubeTokens = function(tokens) {
+  this.youtubeTokens = {
+    accessToken: tokens.access_token,
+    refreshToken: tokens.refresh_token,
+    expiresAt: new Date(Date.now() + (tokens.expires_in * 1000)),
+    scope: tokens.scope ? tokens.scope.split(' ') : [],
+    connectedAt: new Date(),
+    isConnected: true
+  };
+  return this.save();
+};
+
+// Method to refresh YouTube access token
+userSchema.methods.refreshYouTubeToken = async function() {
+  if (!this.youtubeTokens.refreshToken) {
+    throw new Error('No refresh token available');
+  }
+  
+  // This would typically make an API call to Google to refresh the token
+  // For now, we'll just update the expiration
+  this.youtubeTokens.expiresAt = new Date(Date.now() + (3600 * 1000)); // 1 hour from now
+  return this.save();
+};
+
+// Method to check if YouTube token is valid
+userSchema.methods.isYouTubeTokenValid = function() {
+  return this.youtubeTokens.isConnected && 
+         this.youtubeTokens.expiresAt && 
+         this.youtubeTokens.expiresAt > new Date();
+};
+
+// Method to disconnect YouTube
+userSchema.methods.disconnectYouTube = function() {
+  this.youtubeTokens = {
+    accessToken: null,
+    refreshToken: null,
+    expiresAt: null,
+    scope: [],
+    connectedAt: null,
+    isConnected: false
+  };
   return this.save();
 };
 

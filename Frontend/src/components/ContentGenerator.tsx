@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PlatformCard } from "./PlatformCard";
-import { Youtube, Instagram, Twitter, Linkedin, Send, Paperclip, StopCircle } from "lucide-react";
+import { Youtube, Instagram, Twitter, Linkedin, Send, StopCircle, Sparkles, CheckCircle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -245,14 +245,18 @@ export function ContentGenerator() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8">
+    <div className="w-full max-w-6xl mx-auto space-y-8">
       {/* Hero Section */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl lg:text-5xl font-bold text-foreground">
-          Hey! Content Creator
+      <div className="text-center space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full mb-4">
+          <Sparkles className="w-4 h-4 text-purple-400" />
+          <span className="text-sm text-purple-300 font-medium">Powered by AI</span>
+        </div>
+        <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
+          Create Stunning Content
         </h1>
-        <p className="text-xl text-muted-foreground">
-          What platform can I help you create content for?
+        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          Choose your platform and let AI craft personalized, engaging content in seconds
         </p>
       </div>
 
@@ -276,9 +280,9 @@ export function ContentGenerator() {
 
       {/* Selected Platform Display */}
       {selectedPlatform && (
-        <div className="text-center p-4 bg-gray-800/50 rounded-lg">
-          <p className="text-lg text-gray-200">
-            Selected Platform: <span className="font-bold capitalize text-white">{selectedPlatform}</span>
+        <div className="text-center p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl backdrop-blur-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <p className="text-lg text-gray-300">
+            Selected Platform: <span className="font-bold capitalize bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{selectedPlatform}</span>
           </p>
         </div>
       )}
@@ -286,37 +290,32 @@ export function ContentGenerator() {
       {/* Content Input */}
       {selectedPlatform && (
         <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
-          <div className="relative">
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500"></div>
             <Textarea
-              placeholder="Describe the content you want to create..."
+              placeholder="✨ Describe the content you want to create... Be specific for best results!"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[120px] bg-white/20 backdrop-blur-md rounded-2xl resize-none text-gray-100 placeholder:text-white/40 transition-all duration-300"
+              className="relative min-h-[160px] bg-slate-900/90 backdrop-blur-md border border-purple-500/20 rounded-2xl resize-none text-gray-100 placeholder:text-gray-500 transition-all duration-300 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20"
               disabled={loading}
             />
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="bg-gray-800 rounded-full hover:bg-white hover:text-black"
-                disabled={loading}
-              >
-                <Paperclip className="w-4 h-4 mr-2" />
-                Attach file
-              </Button>
+              <div className="text-xs text-gray-500">
+                {prompt.length > 0 && `${prompt.length} characters`}
+              </div>
               {!loading ? (
                 <Button
                   onClick={handleStreamingGenerate}
                   disabled={!prompt.trim() || !selectedPlatform}
-                  className="bg-gray-800 rounded-full hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-purple-500/50"
                 >
                   <Send className="w-4 h-4 mr-2" />
-                  Generate
+                  Generate with AI
                 </Button>
               ) : (
                 <Button
                   onClick={stopStreaming}
-                  className="bg-red-600 rounded-full hover:bg-red-700 text-white transition-all duration-300"
+                  className="bg-red-600 rounded-full hover:bg-red-700 text-white transition-all duration-300 shadow-lg"
                 >
                   <StopCircle className="w-4 h-4 mr-2" />
                   Stop
@@ -335,21 +334,29 @@ export function ContentGenerator() {
 
           {/* Streaming Status */}
           {loading && (
-            <div className="mt-6 p-4 bg-gray-800/50 rounded-xl">
-              <div className="space-y-3">
+            <div className="mt-6 p-6 bg-gradient-to-br from-purple-900/30 to-pink-900/30 border border-purple-500/30 rounded-2xl backdrop-blur-sm">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-gray-300 font-medium">{streamingStatus}</p>
-                  <span className="text-sm text-gray-400">
-                    {currentIteration > 0 && `${currentIteration}/${maxIterations}`}
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                    <p className="text-gray-200 font-medium">{streamingStatus}</p>
+                  </div>
+                  <span className="text-sm text-purple-300 font-medium">
+                    {currentIteration > 0 && `Iteration ${currentIteration}/${maxIterations}`}
                   </span>
                 </div>
                 
                 {/* Progress Bar */}
-                <div className="w-full bg-gray-600 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${progress}%` }}
-                  ></div>
+                <div className="relative">
+                  <div className="w-full bg-slate-800/50 rounded-full h-3 overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 h-3 rounded-full transition-all duration-500 relative animate-shimmer bg-[length:200%_100%]"
+                      style={{ width: `${progress}%` }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-purple-300 mt-2 text-right">{progress}%</div>
                 </div>
               </div>
             </div>
@@ -357,19 +364,27 @@ export function ContentGenerator() {
 
           {/* Streaming Content Display */}
           {(streaming && streamingContent) && (
-            <div className="mt-6 p-4 bg-gray-800 text-gray-100 rounded-xl shadow">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="font-bold text-lg text-white">Content Being Generated...</h4>
-                <div className="flex items-center space-x-2 text-sm text-gray-400">
+            <div className="mt-6 p-6 bg-gradient-to-br from-slate-900/90 to-purple-900/20 border border-purple-500/30 rounded-2xl backdrop-blur-sm shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-purple-500 blur-md opacity-50 animate-pulse"></div>
+                    <Sparkles className="relative w-5 h-5 text-purple-400" />
+                  </div>
+                  <h4 className="font-bold text-lg bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    AI is Crafting Your Content...
+                  </h4>
+                </div>
+                <div className="flex items-center space-x-2 px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span>Live</span>
+                  <span className="text-sm text-green-300 font-medium">Live</span>
                 </div>
               </div>
 
-              <div className="border-t border-gray-600 pt-4">
-                <pre className="whitespace-pre-wrap font-sans text-gray-100 leading-relaxed">
+              <div className="border-t border-purple-500/20 pt-6">
+                <pre className="whitespace-pre-wrap font-sans text-gray-200 leading-relaxed text-[15px]">
                   {streamingContent}
-                  {streaming && <span className="animate-pulse text-blue-400">|</span>}
+                  {streaming && <span className="animate-pulse text-purple-400 font-bold">▊</span>}
                 </pre>
               </div>
             </div>
@@ -392,14 +407,28 @@ export function ContentGenerator() {
 
           {/* Final Results Display */}
           {result && !streaming && (
-            <div className="mt-6 p-4 bg-gray-800 text-gray-100 rounded-xl shadow border-l-4 border-green-500">
-              <h4 className="font-bold text-lg text-white">{result.title}</h4>
-              <p className="text-sm text-gray-400 mb-2">
-                {result.type?.replace('_', ' ').toUpperCase()} • {result.platform?.toUpperCase()}
-              </p>
+            <div className="mt-6 p-6 bg-gradient-to-br from-slate-900/90 to-green-900/20 border border-green-500/40 rounded-2xl backdrop-blur-sm shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <h4 className="font-bold text-xl bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                      {result.title}
+                    </h4>
+                  </div>
+                  <div className="flex items-center space-x-3 text-sm">
+                    <span className="px-2 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300">
+                      {result.type?.replace('_', ' ').toUpperCase()}
+                    </span>
+                    <span className="px-2 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-blue-300">
+                      {result.platform?.toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               {result.description && (
-                <p className="mb-3 text-gray-300 text-sm">{result.description}</p>
+                <p className="mb-4 text-gray-300 text-sm bg-slate-800/30 p-3 rounded-lg">{result.description}</p>
               )}
 
             <div className="border-t border-gray-600 pt-4 mt-4 prose prose-invert max-w-none">

@@ -1,5 +1,6 @@
 // youtubeController.js
 const youtubeService = require("../services/youtubeService");
+const youtubeOAuthService = require("../services/youtubeOAuthService");
 const Redis = require("ioredis");
 
 // Mandatory Redis connection
@@ -14,14 +15,14 @@ redis.on('error', (err) => {
 });
 
 /**
- * Auto persona extraction from YouTube
+ * Auto persona extraction from YouTube (OAuth-based)
  */
 exports.extractPersona = async (req, res) => {
   try {
-    const { userId, channelId } = req.body;
+    const { userId } = req.body;
 
-    if (!userId || !channelId) {
-      return res.status(400).json({ message: "userId and channelId required" });
+    if (!userId) {
+      return res.status(400).json({ message: "userId required" });
     }
 
     // 🔍 Step 1: Check if transcripts are still cached in Redis
@@ -37,7 +38,7 @@ exports.extractPersona = async (req, res) => {
       }
 
       // Send cached transcripts directly to AI model
-      const personaData = await youtubeService.sendToAIAndSave(userId, transcripts);
+      const personaData = await youtubeOAuthService.sendToAIAndSave(userId, transcripts);
 
       return res.status(200).json({
         message: "Persona extracted from cached transcripts and saved successfully",
@@ -45,8 +46,8 @@ exports.extractPersona = async (req, res) => {
       });
     }
 
-    // 🔁 Step 2: Otherwise fetch from YouTube + process via service
-    const personaData = await youtubeService.extractPersonaFromChannel(userId, channelId);
+    // 🔁 Step 2: Otherwise fetch from user's YouTube channel using OAuth
+    const personaData = await youtubeOAuthService.extractPersonaFromUserChannel(userId);
 
     res.status(200).json({
       message: "Persona extracted and saved successfully",
@@ -55,6 +56,30 @@ exports.extractPersona = async (req, res) => {
   } catch (error) {
     console.error("❌ Error in extractPersona:", error.message);
     res.status(500).json({ message: "Failed to extract persona", error: error.message });
+  }
+};
+
+/**
+ * Legacy persona extraction from YouTube channel (public API)
+ */
+exports.extractPersonaFromChannel = async (req, res) => {
+  try {
+    const { userId, channelId } = req.body;
+
+    if (!userId || !channelId) {
+      return res.status(400).json({ message: "userId and channelId required" });
+    }
+
+    // Use the original service for public channel extraction
+    const personaData = await youtubeService.extractPersonaFromChannel(userId, channelId);
+
+    res.status(200).json({
+      message: "Persona extracted from public channel and saved successfully",
+      persona: personaData,
+    });
+  } catch (error) {
+    console.error("❌ Error in extractPersonaFromChannel:", error.message);
+    res.status(500).json({ message: "Failed to extract persona from channel", error: error.message });
   }
 };
 

@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Briefcase, Pen, Users, Image, ChartBar, MessageSquare, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { Briefcase, Pen, Users, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { useBackendProfile } from "@/hooks/useBackendProfile";
 import { useNavigate } from "react-router-dom";
 

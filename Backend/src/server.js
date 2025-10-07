@@ -8,6 +8,7 @@ require('dotenv').config();
 //routes
 const userRoutes = require('./routes/userRoutes');
 const youtubeRoutes = require('./routes/youtubeRoutes');
+const oauthRoutes = require('./routes/oauthRoutes');
 
 //middleware
 const { errorHandler } = require('./middleware/errorHandler');
@@ -59,6 +60,7 @@ app.get('/api/health', (req, res) => {
 // API routes
 app.use('/api/users', userRoutes);
 app.use("/api/youtube", youtubeRoutes);
+app.use("/api/oauth", oauthRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

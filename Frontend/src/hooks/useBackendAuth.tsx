@@ -3,6 +3,7 @@ import { apiService } from '@/lib/api';
 import { useToast } from './use-toast';
 
 interface User {
+  avatar: string;
   id: string;
   email: string;
   name: string;

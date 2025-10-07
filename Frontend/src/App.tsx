@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import ProfileSetup from "./pages/ProfileSetup";
 import Cre8Echo from "./pages/Cre8Echo";
 import Dashboard from "./pages/Dashboard";
+import YouTubeCallback from "./pages/YouTubeCallback";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -52,6 +53,7 @@ const App = () => (
                       <Cre8Echo />
                     </ProtectedRoute>
                   } />
+                  <Route path="/auth/youtube/callback" element={<YouTubeCallback />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Toaster />

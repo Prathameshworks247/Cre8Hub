@@ -1,5 +1,5 @@
 
-import { Brain,Image, BarChart3,VideoIcon,Sparkle, Users, Zap, Target, Shield } from "lucide-react";
+import { Brain,Image, BarChart3,VideoIcon,Sparkle, Users, Zap, Target } from "lucide-react";
 
 const features = [
   {

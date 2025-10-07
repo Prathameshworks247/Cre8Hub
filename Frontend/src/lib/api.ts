@@ -112,10 +112,17 @@ class ApiService {
     });
   }
   // Persona endpoints
-  async extractPersonaFromYouTube(channelId: string) {
+  async extractPersonaFromYouTube(userId: string) {
     return this.request('/youtube/extract-persona', {
       method: 'POST',
-      body: JSON.stringify({ channelId }),
+      body: JSON.stringify({ userId }),
+    });
+  }
+
+  async extractPersonaFromChannel(channelId: string, userId: string) {
+    return this.request('/youtube/extract-persona-channel', {
+      method: 'POST',
+      body: JSON.stringify({ channelId, userId }),
     });
   }
 
@@ -123,6 +130,27 @@ class ApiService {
     return this.request('/youtube/manual-persona', {
       method: 'POST',
       body: JSON.stringify({ persona }),
+    });
+  }
+
+  // OAuth endpoints
+  async getYouTubeAuthUrl() {
+    return this.request('/oauth/youtube/auth-url');
+  }
+
+  async getYouTubeConnectionStatus() {
+    return this.request('/oauth/youtube/status');
+  }
+
+  async disconnectYouTube() {
+    return this.request('/oauth/youtube/disconnect', {
+      method: 'POST',
+    });
+  }
+
+  async refreshYouTubeToken() {
+    return this.request('/oauth/youtube/refresh-token', {
+      method: 'POST',
     });
   }
   async updatePersona(personaData: any) {

@@ -19,7 +19,6 @@ import { User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useBackendAuth();
   const navigate = useNavigate();

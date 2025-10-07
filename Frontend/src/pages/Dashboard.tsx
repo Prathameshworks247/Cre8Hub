@@ -22,6 +22,7 @@ const Dashboard = () => {
       .toUpperCase()
       .slice(0, 2);
   };
+  
 
   const features = [
     {
@@ -108,7 +109,7 @@ const Dashboard = () => {
                 <Avatar className="h-8 w-8 ring-2 ring-white/10">
                   <AvatarImage src={user?.avatar || ""} />
                   <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
-                    {user?.name ? getInitials(user.name) : "U"}
+                    {user?.name ? getInitials(user.name) : user.email.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block">
