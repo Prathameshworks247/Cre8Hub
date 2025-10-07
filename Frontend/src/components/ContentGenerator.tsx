@@ -56,7 +56,7 @@ export function ContentGenerator() {
 
   const handleSave = async (output) => {
     try {
-      const res = await fetch("http://localhost:7000/save_output", {
+      const res = await fetch(`${import.meta.env.VITE_AI_WORKFLOW_URL || 'http://localhost:7000'}/save_output`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -123,7 +123,7 @@ export function ContentGenerator() {
         iterations: 3
       };
 
-      const response = await fetch("http://localhost:6969/generate-stream", {
+      const response = await fetch(`${import.meta.env.VITE_AI_WORKFLOW_URL || 'http://localhost:6969'}/generate-stream`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
