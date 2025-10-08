@@ -19,9 +19,14 @@ JWT_REFRESH_SECRET=your-refresh-secret-key-here
 JWT_REFRESH_EXPIRES_IN=7d
 
 # YouTube API Configuration
+# For Production: Complete OAuth verification process first
 YOUTUBE_CLIENT_ID=your-youtube-client-id
 YOUTUBE_CLIENT_SECRET=your-youtube-client-secret
-YOUTUBE_REDIRECT_URI=https://your-domain.com/auth/youtube/callback
+YOUTUBE_REDIRECT_URI=https://your-backend-domain.com/oauth/youtube/callback
+
+# YouTube API Scopes (must be verified for production)
+# https://www.googleapis.com/auth/youtube.readonly
+# https://www.googleapis.com/auth/youtube.force-ssl
 
 # Email Configuration (Optional)
 EMAIL_HOST=smtp.gmail.com
@@ -75,9 +80,53 @@ CORS_ORIGIN=https://your-frontend-domain.vercel.app
 4. Whitelist IP addresses (0.0.0.0/0 for all IPs)
 5. Get connection string and add to MONGODB_URI
 
+## YouTube API Production Setup
+
+### Current Status: Test Mode
+- Only test users can authenticate
+- Limited to 100 users
+- Public users cannot link YouTube accounts
+
+### Production Verification Process (4-6 weeks)
+
+1. **OAuth Consent Screen**:
+   - Go to Google Cloud Console > OAuth consent screen
+   - Change from "Testing" to "Production"
+   - Complete all required fields
+
+2. **Required Scopes Justification**:
+   ```
+   youtube.readonly: "Analyze user's YouTube content for persona extraction and content generation"
+   youtube.force-ssl: "Secure communication with YouTube API endpoints"
+   ```
+
+3. **Submission Requirements**:
+   - App demo video (2-3 minutes)
+   - Screenshots of OAuth flow
+   - Privacy policy and terms of service
+   - Detailed scope justifications
+
+4. **Alternative: Manual Channel Integration**:
+   - Users enter channel ID manually
+   - Use public YouTube API endpoints
+   - No OAuth verification needed
+   - Faster to implement
+
+### Environment Variables for Production
+```env
+# YouTube API (after verification)
+YOUTUBE_CLIENT_ID=your-verified-client-id
+YOUTUBE_CLIENT_SECRET=your-verified-client-secret
+YOUTUBE_REDIRECT_URI=https://your-backend-domain.com/oauth/youtube/callback
+
+# Or for manual integration (no verification needed)
+YOUTUBE_API_KEY=your-youtube-api-key
+```
+
 ## Health Check
 
 Your API will be available at:
 - Health: `GET https://your-domain.com/api/health`
 - Sign Up: `POST https://your-domain.com/api/users/signup`
 - Sign In: `POST https://your-domain.com/api/users/signin`
+- YouTube OAuth: `GET https://your-domain.com/oauth/youtube/auth-url`
