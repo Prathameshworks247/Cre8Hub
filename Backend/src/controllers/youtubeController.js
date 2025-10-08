@@ -1,18 +1,7 @@
 // youtubeController.js
 const youtubeService = require("../services/youtubeService");
 const youtubeOAuthService = require("../services/youtubeOAuthService");
-const Redis = require("ioredis");
-
-// Mandatory Redis connection
-const redis = new Redis({
-  host: process.env.REDIS_HOST || "127.0.0.1",
-  port: process.env.REDIS_PORT || 6379,
-  password: process.env.REDIS_PASSWORD || undefined,
-});
-
-redis.on('error', (err) => {
-  console.error('❌ Redis connection error:', err.message);
-});
+const redis = require('../utils/redis');
 
 /**
  * Auto persona extraction from YouTube (OAuth-based)

@@ -34,8 +34,12 @@ EMAIL_PORT=587
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password
 
-# Redis Configuration (Optional)
+# Redis Configuration (Optional - uses in-memory fallback if not provided)
 REDIS_URL=redis://localhost:6379
+# OR
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your-redis-password
 
 # CORS Configuration
 CORS_ORIGIN=https://your-frontend-domain.vercel.app
@@ -79,6 +83,23 @@ CORS_ORIGIN=https://your-frontend-domain.vercel.app
 3. Create database user
 4. Whitelist IP addresses (0.0.0.0/0 for all IPs)
 5. Get connection string and add to MONGODB_URI
+
+## Redis Configuration (Optional)
+
+### Option 1: No Redis (Recommended for Free Hosting)
+- **Default behavior**: Uses in-memory fallback caching
+- **Pros**: No additional service needed, works on all platforms
+- **Cons**: Cache resets on app restart
+
+### Option 2: Free Redis Hosting
+- **Upstash**: [upstash.com](https://upstash.com) - Free tier available
+- **Redis Cloud**: [redis.com/redis-enterprise-cloud](https://redis.com/redis-enterprise-cloud) - Free tier
+- **Railway**: Add Redis service to your Railway project
+
+### Option 3: Production Redis
+- **AWS ElastiCache**: Paid service
+- **Google Cloud Memorystore**: Paid service
+- **Self-hosted**: Docker container on VPS
 
 ## YouTube API Production Setup
 

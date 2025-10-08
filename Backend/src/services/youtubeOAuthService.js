@@ -1,25 +1,6 @@
 const axios = require('axios');
 const User = require('../models/userModel');
-const Redis = require('ioredis');
-
-// Redis connection
-const redis = new Redis({
-  host: process.env.REDIS_HOST || "127.0.0.1",
-  port: process.env.REDIS_PORT || 6379,
-  password: process.env.REDIS_PASSWORD || null,
-  retryDelayOnFailover: 100,
-  enableReadyCheck: false,
-  maxRetriesPerRequest: null,
-  lazyConnect: true
-});
-
-redis.on('connect', () => {
-  console.log('✅ Redis connected successfully');
-});
-
-redis.on('error', (err) => {
-  console.error('❌ Redis connection error:', err.message);
-});
+const redis = require('../utils/redis');
 
 // Constants
 const CACHE_EXPIRY = 86400; // 24 hours
