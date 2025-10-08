@@ -34,12 +34,37 @@ const allowedOrigins = [
   "http://localhost:8080",
   "http://localhost:5001",
   "http://localhost:3000",
-  process.env.CORS_ORIGIN
+  process.env.CORS_ORIGIN,
+  // Add common Vercel domains
+  "https://cre8hub-murex.vercel.app",
+  "https://cre8hub.vercel.app"
 ].filter(Boolean); // Remove undefined values
 
+console.log('🔗 Allowed CORS origins:', allowedOrigins);
+
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // In development, allow all origins
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    
+    // In production, check allowed origins
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    console.log('❌ CORS blocked origin:', origin);
+    console.log('✅ Allowed origins:', allowedOrigins);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  optionsSuccessStatus: 200
 }));
 
 // Body parsing middleware

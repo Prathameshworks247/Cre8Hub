@@ -41,8 +41,8 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=your-redis-password
 
-# CORS Configuration
-CORS_ORIGIN=https://your-frontend-domain.vercel.app
+# CORS Configuration (Your Vercel frontend URL)
+CORS_ORIGIN=https://cre8hub-murex.vercel.app
 ```
 
 ## Free Hosting Options
@@ -143,6 +143,25 @@ YOUTUBE_REDIRECT_URI=https://your-backend-domain.com/oauth/youtube/callback
 # Or for manual integration (no verification needed)
 YOUTUBE_API_KEY=your-youtube-api-key
 ```
+
+## CORS Configuration
+
+### Required Environment Variable:
+```env
+CORS_ORIGIN=https://cre8hub-murex.vercel.app
+```
+
+### CORS Troubleshooting:
+If you get CORS errors, check:
+1. **Set CORS_ORIGIN** in your hosting platform's environment variables
+2. **Exact URL match** - Include `https://` and no trailing slash
+3. **Check logs** - Backend will log allowed origins on startup
+
+### Common CORS Errors:
+- ❌ `Access-Control-Allow-Origin header is missing`
+  - **Fix**: Set `CORS_ORIGIN` environment variable
+- ❌ `Origin not allowed`
+  - **Fix**: Add your exact Vercel URL to `CORS_ORIGIN`
 
 ## Health Check
 
