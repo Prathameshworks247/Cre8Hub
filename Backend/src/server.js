@@ -16,7 +16,7 @@ const { connectDB } = require('./config/database');
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet());
@@ -30,11 +30,15 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // CORS configuration
+const allowedOrigins = [
+  "http://localhost:8080",
+  "http://localhost:5001",
+  "http://localhost:3000",
+  process.env.CORS_ORIGIN
+].filter(Boolean); // Remove undefined values
+
 app.use(cors({
-  origin: [
-    "http://localhost:8080",
-    "http://localhost:5001"
-  ],
+  origin: allowedOrigins,
   credentials: true
 }));
 
