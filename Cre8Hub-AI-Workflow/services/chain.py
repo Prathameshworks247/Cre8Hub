@@ -1,6 +1,6 @@
 import os
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain.chains import LLMChain
 from langchain.schema import Document

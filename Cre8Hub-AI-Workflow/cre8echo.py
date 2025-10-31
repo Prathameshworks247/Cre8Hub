@@ -6,7 +6,7 @@ import json
 import os
 import asyncio
 from typing import Optional, Dict, Any, AsyncGenerator
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import LLMChain
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler

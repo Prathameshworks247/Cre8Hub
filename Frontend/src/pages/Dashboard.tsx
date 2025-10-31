@@ -231,7 +231,7 @@ const Dashboard = () => {
               <p className="text-3xl font-bold text-white mb-1">8.7%</p>
               <p className="text-gray-400 text-sm">Avg. Engagement</p>
             </CardContent>
-          </Card>
+        </Card>
         </div>
 
         {/* Analytics Section */}
