@@ -8,7 +8,7 @@ A comprehensive backend API for the Cre8Hub application built with Node.js, Expr
 - **Unified User Model**: Single MongoDB model with embedded profile data
 - **Role-Based Profiles**: Support for content creators, entrepreneurs, and social media managers
 - **Security**: Rate limiting, CORS, helmet security headers
-- **Modular Architecture**: Clean separation of routes, controllers, services, and models
+- **Modular Architecture**: Clean separation of routes, controllers, services,and models
 
 ## 📁 Project Structure
 
