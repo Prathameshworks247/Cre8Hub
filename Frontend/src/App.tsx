@@ -16,6 +16,7 @@ import ProfileSetup from "./pages/ProfileSetup";
 import Cre8Echo from "./pages/Cre8Echo";
 import Dashboard from "./pages/Dashboard";
 import YouTubeCallback from "./pages/YouTubeCallback";
+import Cre8Canvas from "./pages/Cre8Canvas";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -51,6 +52,11 @@ const App = () => (
                   <Route path="/cre8echo" element={
                     <ProtectedRoute requireAuth={true}>
                       <Cre8Echo />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/cre8canvas" element={
+                    <ProtectedRoute requireAuth={true}>
+                      <Cre8Canvas />
                     </ProtectedRoute>
                   } />
                   <Route path="/auth/youtube/callback" element={<YouTubeCallback />} />

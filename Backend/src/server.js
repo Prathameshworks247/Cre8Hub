@@ -34,6 +34,7 @@ const allowedOrigins = [
   "http://localhost:8080",
   "http://localhost:5001",
   "http://localhost:3000",
+  "https://cre8-hub.vercel.app",
   process.env.CORS_ORIGIN,
   // Add common Vercel domains
   "https://cre8hub-murex.vercel.app",
