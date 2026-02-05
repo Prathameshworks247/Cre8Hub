@@ -39,19 +39,23 @@ export const Header = () => {
   const navItems = [
     {
       name: "Home",
-      link: "#",
+      link: "/",
     },
     {
       name: "Features",
-      link: "#features",
+      link: "/features",
+    },
+    {
+      name: "Showcase",
+      link: "/showcase",
     },
     {
       name: "Pricing",
-      link: "#pricing",
+      link: "/#pricing",
     },
     {
       name: "About",
-      link: "#faq",
+      link: "/#faq",
     },
   ];
   return (

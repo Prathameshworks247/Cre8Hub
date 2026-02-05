@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, User, Settings, Plus, Palette, Video, Sparkles, Clock, TrendingUp, Target, Zap, Eye, Heart, MessageCircle, Share2, ArrowUp, ArrowDown, Users, Calendar, ThumbsUp, BarChart3, Lightbulb, Play, TrendingDown } from "lucide-react";
+import { LogOut, User, Settings, Plus, Palette, Video, Sparkles, Clock, TrendingUp, Zap, Eye, Heart, MessageCircle, Share2, ArrowUp, ArrowDown, Users, Calendar, ThumbsUp, BarChart3, Lightbulb, Play, TrendingDown, Rocket } from "lucide-react";
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../public/lovable-uploads/logomain.png';
@@ -113,11 +113,11 @@ const Dashboard = () => {
       accentColor: "violet"
     },
     {
-      name: "Cre8Reach",
-      description: "AI-driven targeting, posting strategies, and platform-specific recommendations",
-      icon: Target,
-      status: "coming-soon",
-      gradient: "from-slate-700/50 to-slate-800",
+      name: "Cre8Boost",
+      description: "Mark projects launch-ready. Get promo assets, multi-platform copy, and distribute to social and Cre8Hub showcase",
+      icon: Rocket,
+      status: "active",
+      gradient: "from-cyan-600/20 via-blue-600/10 to-slate-800",
       accentColor: "cyan"
     },
     {
@@ -150,7 +150,7 @@ const Dashboard = () => {
               </Button>
               
               <div className="flex items-center space-x-3">
-                <Avatar className="h-8 w-8 ring-2 ring-purple-500/30 ring-offset-2 ring-offset-slate-900">
+                <Avatar className="h-8 w-8 ring-2 ring-purple-500/30 ring-offset-2 ring-offset-slate-900" onClick={() => navigate('/profile-setup')}>
                   <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
                     {getInitials(user?.name || '')}
                   </AvatarFallback>

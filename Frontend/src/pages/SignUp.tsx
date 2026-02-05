@@ -59,7 +59,7 @@ const SignUp = () => {
       title: "Account created!",
       description: "You have successfully signed up.",
     });
-    navigate("/");
+    navigate("/profile-setup");
   };
 
   return (

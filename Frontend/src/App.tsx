@@ -17,6 +17,11 @@ import Cre8Echo from "./pages/Cre8Echo";
 import Dashboard from "./pages/Dashboard";
 import YouTubeCallback from "./pages/YouTubeCallback";
 import Cre8Canvas from "./pages/Cre8Canvas";
+import Cre8Boost from "./pages/Cre8Boost";
+import Features from "./pages/Features";
+import Showcase from "./pages/Showcase";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -29,6 +34,10 @@ const App = () => (
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Landing />} />
+                  <Route path="/features" element={<Features />} />
+                  <Route path="/showcase" element={<Showcase />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
                   <Route path="/signin" element={
                     <ProtectedRoute requireAuth={false}>
                       <SignIn />
@@ -57,6 +66,11 @@ const App = () => (
                   <Route path="/cre8canvas" element={
                     <ProtectedRoute requireAuth={true}>
                       <Cre8Canvas />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/cre8boost" element={
+                    <ProtectedRoute requireAuth={true}>
+                      <Cre8Boost />
                     </ProtectedRoute>
                   } />
                   <Route path="/auth/youtube/callback" element={<YouTubeCallback />} />

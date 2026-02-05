@@ -466,7 +466,6 @@ async def get_types():
         ]
     }
 
-
 if __name__ == "__main__":
     import uvicorn
     print("🚀 Starting Cre8Canvas Server...")
